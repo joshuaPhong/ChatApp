@@ -1,8 +1,13 @@
 <!--login.php-->
 <?php
-include("databaseConnection.php");
+include("database_connection.php");
 session_start();
 $message = "";
+
+if (isset($_SESSION['user_id'])){
+    header("location: index.php");
+}
+
 if (isset($_POST['login'])) {
     $query = "SELECT * FROM login WHERE username = :username";
     $statement = $connect->prepare($query);
@@ -12,12 +17,12 @@ if (isset($_POST['login'])) {
         $result = $statement->fetchAll();
         foreach ($result as $row) {
             if (password_verify($_POST['password'], $row['password'])) {
-                $_SESSION['userId'] = $row['userId'];
+                $_SESSION['user_id'] = $row['user_id'];
                 $_SESSION['username'] = $row['username'];
-                $subQuery = "INSERT INTO loginDetails(userId) VALUES ('" . $row['userId'] . "')";
+                $subQuery = "INSERT INTO login_details(user_id) VALUES ('" . $row['user_id'] . "')";
                 $statement = $connect->prepare($subQuery);
                 $statement->execute();
-                $_SESSION['loginDetailsId'] = $connect->lastInsertId();
+                $_SESSION['login_details'] = $connect->lastInsertId();
                 header('location: index.php');
             }
         }

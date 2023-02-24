@@ -3,11 +3,11 @@
 <?php
 echo "hello app";
 
-include('databaseConnection.php');
+include('database_connection.php');
 
 session_start();
-
-if (!isset($_SESSION['userId'])) {
+// redirect user if not logged in
+if (!isset($_SESSION['user_id'])) {
     header('location: login.php');
 }
 ?>
@@ -26,6 +26,51 @@ if (!isset($_SESSION['userId'])) {
 </head>
 
 <body>
+<div class="container">
+    <br />
 
+    <h3 align="center">Chat Application using PHP Ajax Jquery</a></h3><br />
+    <br />
+
+    <div class="table-responsive">
+        <h4 align="center">Online User</h4>
+        <p align="right">Hi - <?php echo $_SESSION['username'];  ?> - <a href="logout.php">Logout</a></p>
+        <div id="user_details"></div>
+    </div>
+</div>
 </body>
 </html>
+
+
+<script>
+    $(document).ready(function () {
+
+        fetch_user();
+
+        setInterval(function (){
+            update_last_activity();
+            fetch_user();
+        }, 5000);
+
+        function fetch_user()
+        {
+            $.ajax({
+                url:"fetch_user.php",
+                method:"POST",
+                success:function(data){
+                    $('#user_details').html(data);
+                }
+            })
+        }
+
+        function update_last_activity() {
+            $.ajax({
+                url: "update_last_activity.php",
+                success: function () {
+
+                }
+            })
+        }
+
+    });
+</script>
